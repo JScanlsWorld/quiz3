@@ -1,0 +1,23 @@
+Here is the code for quiz 3:
+
+section .text
+	
+	global _start
+_start:
+	mov eax, [x]        ;load eax with x = 4 (or whatever number)
+	mov ecx, [x]        ;load ecx with x
+	sub ecx, 1          ;subtract 1 from ecx to ensure values multiplied descend
+	call factorial      ;call factorial procedure
+	call exit
+
+factorial:
+	mul ecx             ;multiply the current value in eax by ecx
+	loop factorial      ;decrement ecx (since ecx is treated as a counter by default)
+
+exit:
+	mov eax, 1
+    int 0x80
+
+
+section .data
+	x	dd	4
