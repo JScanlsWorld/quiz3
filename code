@@ -2,22 +2,45 @@ Here is the code for quiz 3:
 
 section .text
 	
-	global _start
+    global _start
 _start:
-	mov eax, [x]        ;load eax with x = 4 (or whatever number)
-	mov ecx, [x]        ;load ecx with x
-	sub ecx, 1          ;subtract 1 from ecx to ensure values multiplied descend
-	call factorial      ;call factorial procedure
-	call exit
-
-factorial:
-	mul ecx             ;multiply the current value in eax by ecx
-	loop factorial      ;decrement ecx (since ecx is treated as a counter by default)
-
-exit:
-	mov eax, 1
+    mov al, [x]                 ;load eax with x = 4
+    mov cl, [x]                 ;load ecx with x
+    sub cl, 1                   ;subtract 1 from ecx to ensure values multiplied descend
+    call factorial              ;call factorial procedure
+    call convert
+    call print
+	
+    mov eax, 1
     int 0x80
 
+factorial:
+    mul cl                      ;multiply the current value in eax by ecx
+    loop factorial              ;decrement ecx (since ecx is treated as a counter by default)
+    ret
+
+convert:
+    mov bl, 10                  ;divide x! to obtain the number in the 10s and the number in the 1s place
+    div bl                      
+    add al, '0'                 ;get the ascii equivalent of the first number
+    add ah, '0'                 ;get the ascii equivalent of the second number
+
+    mov ecx, number
+    mov BYTE[ecx], al           ;load "number" with the first number to be printed
+    mov BYTE[ecx + 1], ah       ;load the second number to be printed
+    mov BYTE[ecx + 2], 0xA      ;load a newline buffer
+
+    ret
+
+print:
+    ;print the contents of "number"
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, number
+    mov edx, 3
+    int 0x80
+    ret
 
 section .data
-	x	dd	4
+    x	   dd	    4
+    number db 0, 0, 0
